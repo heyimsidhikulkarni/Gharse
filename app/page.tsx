@@ -1,12 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Clock, Star, ChefHat, Truck, Shield, Users } from "lucide-react"
+import { Heart, Clock, Star, ChefHat, Truck, Shield, Users, ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useCart } from "@/contexts/cart-context"
 
 export default function HomePage() {
+  const { getTotalItems, addItem } = useCart();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       {/* Header */}
@@ -31,6 +36,14 @@ export default function HomePage() {
             </Link>
           </nav>
           <div className="flex items-center space-x-3">
+            <Link href="/cart" className="relative p-2">
+              <ShoppingCart className="h-6 w-6 text-gray-600" />
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
+            </Link>
             <Link href="/login">
               <Button variant="ghost" className="text-orange-600 hover:text-orange-700">
                 Login
@@ -168,6 +181,19 @@ export default function HomePage() {
                     </div>
                     <span className="font-semibold text-orange-600">{dish.price}</span>
                   </div>
+                  <Button
+                    className="w-full mt-3 bg-orange-600 hover:bg-orange-700"
+                    onClick={() => {
+                      addItem({
+                        id: `${dish.name}-${index}`,
+                        name: dish.name,
+                        chef: dish.chef,
+                        price: dish.price
+                      });
+                    }}
+                  >
+                    Add to Cart
+                  </Button>
                 </CardContent>
               </Card>
             ))}
